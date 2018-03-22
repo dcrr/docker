@@ -6,44 +6,49 @@ ENV LANG C.UTF-8
 
 ENV WKHTMLTOX_X64 https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 
+#--no-install-recommends
 # Installing some dependencies, lessc and less-plugin-clean-css, and wkhtmltopdf
 RUN set -x; \
         apt-get update \
-        && apt-get install -y --no-install-recommends \
-            ca-certificates \
-            curl \
+        && apt-get install -y \
 			npm \
-			postgresql-client \
+			curl \
+            postgresql-client \
 			postgresql-client-common \
             node-less \
-			python3 \
-			python3-dev \
-            python3-pip \
-            python3-setuptools \
-			python3-pyinotify \
-            python3-renderpm \
-			build-essential \
-			libsasl2-dev \
-			libldap2-dev  
-RUN set -x; \
-        curl -o wkhtmltox.deb -SL ${WKHTMLTOX_X64} \
-        && dpkg --force-depends -i wkhtmltox.deb \
-        && apt-get -y install -f --no-install-recommends \
-        && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false npm \
-        && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
+			python \
+			python-dev \
+            build-essential \
+            python-setuptools \
+            libsasl2-dev \
+			libldap2-dev \
+			libxslt1-dev \
+			libxml2-dev \
+			libevent-dev \
+			libjpeg-dev \
+			python-pip 
+             
+#RUN set -x; \
+#        curl -o wkhtmltox.deb -SL ${WKHTMLTOX_X64} \
+#        && dpkg --force-depends -i wkhtmltox.deb \
+#        && apt-get -y install -f --no-install-recommends \
+#        && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false npm \
+#        && rm -rf /var/lib/apt/lists/* wkhtmltox.deb
 
 # Add user and group odoo
 RUN adduser --system --quiet --shell=/bin/bash --home=/home/odoo --gecos 'ODOO' --group odoo
 
 # Creating the necessary folders to share, with the container, the odoo sources and other host files
-RUN mkdir -p /home/odoo/odoo11 
+RUN mkdir -p /home/odoo/odoo8 
 RUN mkdir -p /home/odoo/share 
+
+VOLUME ["/home/odoo/share", "/home/odoo/odoo8"]
 
 # Set owner to /home/odoo
 RUN chown -R odoo:odoo /home/odoo/*
 
 # Wheel is necessary to compile the some dependencies of odoo
-RUN pip3 install wheel
+RUN pip install wheel
 
 # Copying the odoo requirements file
 COPY ./requirements.txt /home/odoo
@@ -53,7 +58,13 @@ RUN chown odoo:odoo /home/odoo/requirements.txt
 USER odoo
 
 # Installing the odoo dependencies
-RUN pip3 install -r /home/odoo/requirements.txt
+RUN pip install -r /home/odoo/requirements.txt
+
+# Removing PIL to avoid errors in the excution of odoo
+RUN rm -rf /home/odoo/.local/lib/python2.7/site-packages/PIL/
+
+USER root
+RUN pip install --no-cache-dir -I pillow
 
 # Expose Odoo services
 EXPOSE 8069 8071
