@@ -28,7 +28,6 @@ RUN set -x; \
 			libxml2-dev \
 			zlib1g-dev \
 			libevent-dev \
-#			libjpeg-dev \
 			python-pip 
              
 RUN set -x; \
@@ -59,14 +58,10 @@ RUN chown odoo:odoo /home/odoo/requirements.txt
 # Installing the odoo dependencies
 RUN pip install -r /home/odoo/requirements.txt
 
-# Removing PIL to avoid errors in the excution of odoo
-#RUN rm -rf //usr/local/lib/python2.7/dist-packages/PIL/
-#RUN pip install --no-cache-dir -I pillow
-
 # Setting the default user when running the container
 USER odoo
 
 # Expose Odoo services
-EXPOSE 8069 8071
+EXPOSE 8090 8091
 
 CMD ["bin/bash"]
