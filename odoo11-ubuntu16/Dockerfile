@@ -4,6 +4,8 @@ MAINTAINER Diana Rojas, Exood <dianacarolinarojas@gmail.com>
 # Generate locale C.UTF-8 for postgres and general locale data
 ENV LANG C.UTF-8
 
+ENV VERSION_ODOO 11
+
 ENV WKHTMLTOX_X64 https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 
 # Installing some dependencies, lessc and less-plugin-clean-css, and wkhtmltopdf
@@ -36,9 +38,9 @@ RUN set -x; \
 RUN adduser --system --quiet --shell=/bin/bash --home=/home/odoo --gecos 'ODOO' --group odoo
 
 # Creating the necessary folders to share, with the container, the odoo sources and other host files
-RUN mkdir -p /home/odoo/odoo11 
+RUN mkdir -p /home/odoo/odoo${VERSION_ODOO}
 RUN mkdir -p /home/odoo/share 
-VOLUME ["/home/odoo/share", "/home/odoo/odoo11"]
+VOLUME ["/home/odoo/share", "/home/odoo/odoo${VERSION_ODOO}"]]
 
 # Set owner to /home/odoo
 RUN chown -R odoo:odoo /home/odoo/*
@@ -50,13 +52,13 @@ RUN pip3 install wheel
 COPY ./requirements.txt /home/odoo
 RUN chown odoo:odoo /home/odoo/requirements.txt
 
-# Setting the default user when running the container
-USER odoo
-
 # Installing the odoo dependencies
 RUN pip3 install -r /home/odoo/requirements.txt
 
+# Setting the default user when running the container
+USER odoo
+
 # Expose Odoo services
-EXPOSE 8069 8071
+EXPOSE 8060 8061
 
 CMD ["bin/bash"]
