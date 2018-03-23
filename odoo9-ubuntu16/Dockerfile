@@ -67,6 +67,6 @@ RUN pip install --no-cache-dir -I pillow
 USER odoo
 
 # Expose Odoo services
-EXPOSE 8069 8071
+EXPOSE 8080 8081
 
 CMD ["bin/bash"]
