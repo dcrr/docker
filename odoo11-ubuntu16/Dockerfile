@@ -48,6 +48,9 @@ RUN chown -R odoo:odoo /home/odoo/*
 # Wheel is necessary to compile the some dependencies of odoo
 RUN pip3 install wheel
 
+# Installing ptvsd for debugging with visual studio code (only works with version 3.0.0)
+RUN pip3 install ptvsd==3.0.0
+
 # Copying the odoo requirements file
 COPY ./requirements.txt /home/odoo
 RUN chown odoo:odoo /home/odoo/requirements.txt
@@ -58,7 +61,10 @@ RUN pip3 install -r /home/odoo/requirements.txt
 # Setting the default user when running the container
 USER odoo
 
-# Expose Odoo services
+# Expose odoo services
 EXPOSE 8060 8061
+
+# Expose the debug port
+EXPOSE 3000
 
 CMD ["bin/bash"]
