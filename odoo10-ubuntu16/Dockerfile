@@ -58,10 +58,16 @@ RUN chown odoo:odoo /home/odoo/requirements.txt
 # Installing the odoo dependencies
 RUN pip install -r /home/odoo/requirements.txt
 
+# Installing ptvsd for debugging with visual studio code (only works with version 3.0.0)
+RUN pip install ptvsd==3.0.0
+
 # Setting the default user when running the container
 USER odoo
 
 # Expose Odoo services
 EXPOSE 8090 8091
+
+# Expose the debug port
+EXPOSE 3000
 
 CMD ["bin/bash"]

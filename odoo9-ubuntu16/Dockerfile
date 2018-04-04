@@ -63,10 +63,16 @@ RUN pip install -r /home/odoo/requirements.txt
 RUN rm -rf //usr/local/lib/python2.7/dist-packages/PIL/
 RUN pip install --no-cache-dir -I pillow
 
+# Installing ptvsd for debugging with visual studio code (only works with version 3.0.0)
+RUN pip install ptvsd==3.0.0
+
 # Setting the default user when running the container
 USER odoo
 
-# Expose Odoo services
+# Expose odoo services
 EXPOSE 8080 8081
+
+# Expose the debug port
+EXPOSE 3000
 
 CMD ["bin/bash"]
