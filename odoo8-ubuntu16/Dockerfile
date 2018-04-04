@@ -50,7 +50,11 @@ VOLUME ["/home/odoo/share", "/home/odoo/odoo${VERSION_ODOO}"]
 # Set owner to /home/odoo
 RUN chown -R odoo:odoo /home/odoo/*
 
+# Updating pip
 RUN pip install --upgrade pip
+
+# Installing ptvsd for debugging with visual studio code (only works with version 3.0.0)
+RUN pip install ptvsd==3.0.0
 
 # Copying the odoo requirements file
 COPY ./requirements.txt /home/odoo
@@ -66,7 +70,10 @@ RUN pip install --no-cache-dir -I pillow
 # Setting the default user when running the container
 USER odoo
 
-# Expose Odoo services
+# Expose odoo ports
 EXPOSE 8069 8071
+
+# Expose the debug port
+EXPOSE 3000
 
 CMD ["bin/bash"]
