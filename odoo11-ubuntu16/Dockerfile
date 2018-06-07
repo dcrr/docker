@@ -40,10 +40,10 @@ RUN adduser --system --quiet --shell=/bin/bash --home=/home/odoo --gecos 'ODOO' 
 # Creating the necessary folders to share, with the container, the odoo sources and other host files
 RUN mkdir -p /home/odoo/odoo${VERSION_ODOO}
 RUN mkdir -p /home/odoo/share 
-VOLUME ["/home/odoo/share", "/home/odoo/odoo${VERSION_ODOO}"]]
+VOLUME ["/home/odoo/share", "/home/odoo/odoo${VERSION_ODOO}"]
 
 # Set owner to /home/odoo
-RUN chown -R odoo:odoo /home/odoo/*
+RUN chown -R odoo:odoo /home/odoo
 
 # Wheel is necessary to compile the some dependencies of odoo
 RUN pip3 install wheel
@@ -58,6 +58,15 @@ RUN chown odoo:odoo /home/odoo/requirements.txt
 # Installing the odoo dependencies
 RUN pip3 install -r /home/odoo/requirements.txt
 
+# Declaring the environment variables that contain the necessary routes 
+# so that odoo can be started from the entrypoint file.
+ENV ODOO_EXEC /home/odoo/odoo${VERSION_ODOO}/odoo/odoo-bin
+ENV ODOO_CONF /home/odoo/odoo${VERSION_ODOO}/config/odoo${VERSION_ODOO}.conf
+
+# The entrypoint file contains the script needed to run odoo automatically 
+# when the container starts
+COPY ./entrypoint.sh /
+
 # Setting the default user when running the container
 USER odoo
 
@@ -65,6 +74,7 @@ USER odoo
 EXPOSE 8060 8061
 
 # Expose the debug port
-EXPOSE 3000
+EXPOSE 4000
 
-CMD ["bin/bash"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo"]

@@ -61,6 +61,15 @@ RUN pip install -r /home/odoo/requirements.txt
 # Installing ptvsd for debugging with visual studio code (only works with version 3.0.0)
 RUN pip install ptvsd==3.0.0
 
+# Declaring the environment variables that contain the necessary routes 
+# so that odoo can be started from the entrypoint file.
+ENV ODOO_EXEC /home/odoo/odoo${VERSION_ODOO}/odoo/odoo-bin
+ENV ODOO_CONF /home/odoo/odoo${VERSION_ODOO}/config/odoo${VERSION_ODOO}.conf
+
+# The entrypoint file contains the script needed to run odoo automatically 
+# when the container starts
+COPY ./entrypoint.sh /
+
 # Setting the default user when running the container
 USER odoo
 
@@ -70,4 +79,5 @@ EXPOSE 8090 8091
 # Expose the debug port
 EXPOSE 3000
 
-CMD ["bin/bash"]
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["odoo"]
