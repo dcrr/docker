@@ -1,0 +1,72 @@
+version: '2'
+services:
+  # odoo8:
+  #   image: odoo-ubuntu:8-16
+  #   container_name: odoo8-ubu16
+  #   depends_on:
+  #     - postgres9.5
+  #   ports:
+  #     - "8069:8069"
+  #   volumes:
+  #     - /home/odoo/odoo8:/home/odoo/odoo8
+  #   networks:
+  #     odoo_net:
+  #       ipv4_address: 172.18.0.3
+  # odoo9:
+  #   image: odoo-ubuntu:9-16
+  #   container_name: odoo9-ubu16
+  #   depends_on:
+  #     - postgres9.5
+  #   ports:
+  #     - "8080:8080"
+  #   volumes:
+  #     - /home/odoo/odoo9:/home/odoo/odoo9
+  #   networks:
+  #     odoo_net:
+  #       ipv4_address: 172.18.0.4
+  # odoo10:
+  #   image: odoo-ubuntu:10-16
+  #   container_name: odoo10-ubu16
+  #   depends_on:
+  #     - postgres9.5
+  #   ports:
+  #     - "8090:8090"
+  #   volumes:
+  #     - /home/odoo/odoo10:/home/odoo/odoo10
+  #   networks:
+  #     odoo_net:
+  #       ipv4_address: 172.18.0.5
+  odoo11:
+    restart: always 
+    image: odoo-ubuntu:11-16
+    container_name: odoo11-ubu16
+    depends_on:
+      - postgres9.5
+    ports:
+      - "8060:8060"
+    volumes:
+      - /home/odoo/odoo11:/home/odoo/odoo11
+    networks:
+      odoo_net:
+        ipv4_address: 172.18.0.6
+  postgres9.5:
+    restart: always
+    image: postgres:9.5
+    container_name: postgres9.5
+    environment:
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - /home/odoo/Pgdata:/var/lib/postgresql/data
+    networks:
+      odoo_net:
+        ipv4_address: 172.18.0.2
+
+networks:
+  odoo_net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.18.0.0/16

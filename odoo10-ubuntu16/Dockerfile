@@ -69,6 +69,7 @@ ENV ODOO_CONF /home/odoo/odoo${VERSION_ODOO}/config/odoo${VERSION_ODOO}.conf
 # The entrypoint file contains the script needed to run odoo automatically 
 # when the container starts
 COPY ./entrypoint.sh /
+RUN chmod 777 /entrypoint.sh
 
 # Setting the default user when running the container
 USER odoo
